@@ -3,8 +3,10 @@ package main
 import (
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -39,6 +41,13 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	url, err := uploadFile(header.Filename, binary)
+
+	w.Write([]byte(url.String()))
+}
+
+func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
+
 	bucketName := "binary"
 	location := "us-east-1" //As given in docs. Might change when we use our own server
 
@@ -54,11 +63,11 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Successfully created %s\n", bucketName)
 
-	objectName := header.Filename
+	objectName := fileName
 	contentType := "application/octet-stream"
 
 	// Upload the zip file with FPutObject
-	n, err := minioClient.PutObject(bucketName, objectName, binary, contentType)
+	n, err := minioClient.PutObject(bucketName, objectName, file, contentType)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -67,5 +76,6 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	//Get binaryURL from minio for the object that we just uploaded
 	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Minute, nil)
 
-	w.Write([]byte(url.String()))
+	return url, nil
+
 }
