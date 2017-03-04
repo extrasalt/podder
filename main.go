@@ -98,6 +98,31 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
 
 	cmdstr := createCommandString(url.String(), objectName)
+	CreatePod(cmdstr)
+
+	return url, nil
+
+}
+
+func createCommandString(url, filename string) string {
+
+	//"wget -O /bin/#{filename} '#url' && chmod +x /bin/{#filename} && {#filename}"
+
+	return fmt.Sprintf("wget -O /bin/%[2]s '%[1]s' && chmod +x /bin/%[2]s && %[2]s", url, filename)
+
+}
+
+func getShortHash(f io.Reader) string {
+
+	hash := sha256.New()
+	io.Copy(hash, f)
+	key := hex.EncodeToString(hash.Sum(nil))
+
+	return key[:6]
+
+}
+
+func CreatePod(cmdstr string) {
 
 	ports := []map[string]int{
 		map[string]int{
@@ -133,24 +158,4 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	}
 	defer resp.Body.Close()
 	io.Copy(os.Stdout, resp.Body)
-	return url, nil
-
-}
-
-func createCommandString(url, filename string) string {
-
-	//"wget -O /bin/#{filename} '#url' && chmod +x /bin/{#filename} && {#filename}"
-
-	return fmt.Sprintf("wget -O /bin/%[2]s '%[1]s' && chmod +x /bin/%[2]s && %[2]s", url, filename)
-
-}
-
-func getShortHash(f io.Reader) string {
-
-	hash := sha256.New()
-	io.Copy(hash, f)
-	key := hex.EncodeToString(hash.Sum(nil))
-
-	return key[:6]
-
 }
