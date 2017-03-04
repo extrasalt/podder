@@ -68,7 +68,7 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 
 func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 
-	bucketName := fileName
+	bucketName := "binary"
 	location := "us-east-1" //As given in docs. Might change when we use our own server
 
 	err = minioClient.MakeBucket(bucketName, location)
@@ -83,8 +83,8 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	}
 	log.Printf("Successfully created %s\n", bucketName)
 
-	//adds a 6 character sha hash to the name so that files of same name don't get overwritten.
-	objectName := fileName + "-" + getShortHash(file)
+	//TODO: adds a 6 character sha hash to the name so that files of same name don't get overwritten.
+	objectName := fileName
 	contentType := "application/octet-stream"
 
 	// Upload the zip file with FPutObject
