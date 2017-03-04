@@ -74,7 +74,7 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 
 	log.Printf("Successfully uploaded %s of size %d\n", objectName, n)
 	//Get binaryURL from minio for the object that we just uploaded
-	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Minute, nil)
+	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
 
 	return url, nil
 
