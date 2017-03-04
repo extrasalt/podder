@@ -12,7 +12,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"time"
 )
 
@@ -150,14 +149,11 @@ func CreatePod(cmdstr string) error {
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	fmt.Println("%v", req)
-
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
-	io.Copy(os.Stdout, resp.Body)
 
 	return nil
 }
