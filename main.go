@@ -61,12 +61,15 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	url, err := uploadFile(header.Filename, binary)
+	url, objectName, err := uploadFile(header.Filename, binary)
+
+	cmdstr := createCommandString(url.String(), objectName)
+	CreatePod(cmdstr)
 
 	w.Write([]byte(url.String()))
 }
 
-func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
+func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
 
 	bucketName := "binary"
 	location := "us-east-1" //As given in docs. Might change when we use our own server
@@ -97,10 +100,7 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	//Get binaryURL from minio for the object that we just uploaded
 	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
 
-	cmdstr := createCommandString(url.String(), objectName)
-	CreatePod(cmdstr)
-
-	return url, nil
+	return url, objectName, nil
 
 }
 
