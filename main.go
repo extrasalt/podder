@@ -119,12 +119,20 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	encoder.SetEscapeHTML(false)
 	encoder.Encode(pod)
 
-	resp, err := http.Post("http://localhost:8001/api/v1/namespaces/default/pods", "application/json", reader)
+	req, err := http.NewRequest("POST", "http://localhost:8001/api/v1/namespaces/default/pods", reader)
 	if err != nil {
 		panic(err)
 	}
+	req.Header.Set("Content-Type", "application/json")
+
+	fmt.Println("%v", req)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
 	io.Copy(os.Stdout, resp.Body)
-	io.Copy(os.Stdout, reader)
 	return url, nil
 
 }
