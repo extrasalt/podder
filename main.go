@@ -122,7 +122,7 @@ func getShortHash(f io.Reader) string {
 
 }
 
-func CreatePod(cmdstr string) {
+func CreatePod(cmdstr string) error {
 
 	ports := []map[string]int{
 		map[string]int{
@@ -158,4 +158,6 @@ func CreatePod(cmdstr string) {
 	}
 	defer resp.Body.Close()
 	io.Copy(os.Stdout, resp.Body)
+
+	return nil
 }
