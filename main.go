@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
 	"io"
@@ -76,6 +77,16 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	//Get binaryURL from minio for the object that we just uploaded
 	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
 
+	fmt.Println(createCommandString(url.String(), objectName))
+
 	return url, nil
+
+}
+
+func createCommandString(url, filename string) string {
+
+	//"wget -O /bin/#{filename} '#url' && chmod +x /bin/{#filename} && {#filename}"
+
+	return fmt.Sprintf("wget -O /bin/%[2]s '%[1]s' && chmod +x /bin/%[2]s && %[2]s", url, filename)
 
 }
