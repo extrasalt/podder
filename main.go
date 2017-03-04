@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
@@ -49,7 +51,7 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 
 func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 
-	bucketName := "binary"
+	bucketName := fileName
 	location := "us-east-1" //As given in docs. Might change when we use our own server
 
 	err = minioClient.MakeBucket(bucketName, location)
@@ -64,7 +66,8 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	}
 	log.Printf("Successfully created %s\n", bucketName)
 
-	objectName := fileName
+	//adds a 6 character sha hash to the name so that files of same name don't get overwritten.
+	objectName := fileName + "-" + getShortHash(file)
 	contentType := "application/octet-stream"
 
 	// Upload the zip file with FPutObject
@@ -88,5 +91,15 @@ func createCommandString(url, filename string) string {
 	//"wget -O /bin/#{filename} '#url' && chmod +x /bin/{#filename} && {#filename}"
 
 	return fmt.Sprintf("wget -O /bin/%[2]s '%[1]s' && chmod +x /bin/%[2]s && %[2]s", url, filename)
+
+}
+
+func getShortHash(f io.Reader) string {
+
+	hash := sha256.New()
+	io.Copy(hash, f)
+	key := hex.EncodeToString(hash.Sum(nil))
+
+	return key[:6]
 
 }
