@@ -3,9 +3,9 @@ package main
 import (
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
-	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 var minioClient *minio.Client
@@ -64,5 +64,8 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Successfully uploaded %s of size %d\n", objectName, n)
-	io.Copy(w, binary)
+	//Get binaryURL from minio for the object that we just uploaded
+	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Minute, nil)
+
+	w.Write([]byte(url.String()))
 }
