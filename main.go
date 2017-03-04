@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -16,10 +17,10 @@ import (
 )
 
 type Container struct {
-	Image   string         `json:"image"`
-	Name    string         `json:"name"`
-	Command []string       `json:"command"`
-	Ports   map[string]int `json:"ports"`
+	Image   string           `json:"image"`
+	Name    string           `json:"name"`
+	Command []string         `json:"command"`
+	Ports   []map[string]int `json:"ports"`
 }
 
 type Pod struct {
@@ -98,9 +99,11 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 
 	cmdstr := createCommandString(url.String(), objectName)
 
-	ports := map[string]int{
-		"hostPort":      8000,
-		"containerPort": 8000,
+	ports := []map[string]int{
+		map[string]int{
+			"hostPort":      8000,
+			"containerPort": 8000,
+		},
 	}
 	container := Container{"extrasalt/wgettu", "binary", []string{"sh", "-c", cmdstr}, ports}
 	metadata := map[string]string{
@@ -110,10 +113,18 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	pod := Pod{"Pod", "v1", metadata,
 		map[string][]Container{"containers": []Container{container}}}
 
-	encoder := json.NewEncoder(os.Stdout)
+	var b []byte
+	reader := bytes.NewBuffer(b)
+	encoder := json.NewEncoder(reader)
 	encoder.SetEscapeHTML(false)
 	encoder.Encode(pod)
 
+	resp, err := http.Post("http://localhost:8001/api/v1/namespaces/default/pods", "application/json", reader)
+	if err != nil {
+		panic(err)
+	}
+	io.Copy(os.Stdout, resp.Body)
+	io.Copy(os.Stdout, reader)
 	return url, nil
 
 }
