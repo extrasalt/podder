@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
@@ -10,8 +11,23 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 )
+
+type Container struct {
+	Image   string         `json:"image"`
+	Name    string         `json:"name"`
+	Command []string       `json:"command"`
+	Ports   map[string]int `json:"ports"`
+}
+
+type Pod struct {
+	Kind       string                 `json:"kind"`
+	ApiVersion string                 `json:"apiVersion"`
+	Metadata   map[string]string      `json:"metadata"`
+	Spec       map[string][]Container `json:"spec"`
+}
 
 var minioClient *minio.Client
 var err error
@@ -80,7 +96,23 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, error) {
 	//Get binaryURL from minio for the object that we just uploaded
 	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
 
-	fmt.Println(createCommandString(url.String(), objectName))
+	cmdstr := createCommandString(url.String(), objectName)
+
+	ports := map[string]int{
+		"hostPort":      8000,
+		"containerPort": 8000,
+	}
+	container := Container{"extrasalt/wgettu", "binary", []string{"sh", "-c", cmdstr}, ports}
+	metadata := map[string]string{
+		"name":      "goo",
+		"namespace": "default",
+	}
+	pod := Pod{"Pod", "v1", metadata,
+		map[string][]Container{"containers": []Container{container}}}
+
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetEscapeHTML(false)
+	encoder.Encode(pod)
 
 	return url, nil
 
