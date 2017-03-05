@@ -42,7 +42,7 @@ func CreatePod(cmdstr string) error {
 	encoder.SetEscapeHTML(false)
 	encoder.Encode(pod)
 
-	req, err := http.NewRequest("POST", "http://localhost:8001/api/v1/namespaces/default/pods", reader)
+	req, err := http.NewRequest("POST", kubehost+"/api/v1/namespaces/default/pods", reader)
 	if err != nil {
 		panic(err)
 	}

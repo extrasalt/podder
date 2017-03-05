@@ -77,7 +77,7 @@ func CreateReplicaSet(cmdstr string) {
 	encoder.SetEscapeHTML(false)
 	encoder.Encode(rs)
 
-	req, err := http.NewRequest("POST", "http://localhost:8001/apis/extensions/v1beta1/namespaces/default/replicasets", reader)
+	req, err := http.NewRequest("POST", kubehost+"/apis/extensions/v1beta1/namespaces/default/replicasets", reader)
 	if err != nil {
 		panic(err)
 	}

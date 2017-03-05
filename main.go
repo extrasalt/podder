@@ -11,6 +11,8 @@ import (
 var minioClient *minio.Client
 var err error
 
+var kubehost = "http://localhost:8001"
+
 func main() {
 
 	//Test bed values. Replace with real minio address and keys
