@@ -1,33 +1,15 @@
 package main
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
 	"io"
 	"log"
 	"net/http"
-	"net/url"
-	"time"
 )
-
-type Container struct {
-	Image   string           `json:"image"`
-	Name    string           `json:"name"`
-	Command []string         `json:"command"`
-	Ports   []map[string]int `json:"ports"`
-}
-
-type Pod struct {
-	Kind       string                 `json:"kind"`
-	ApiVersion string                 `json:"apiVersion"`
-	Metadata   map[string]string      `json:"metadata"`
-	Spec       map[string][]Container `json:"spec"`
-}
 
 var minioClient *minio.Client
 var err error
@@ -68,41 +50,6 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(url.String()))
 }
 
-func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
-
-	bucketName := "binary"
-	location := "us-east-1" //As given in docs. Might change when we use our own server
-
-	err = minioClient.MakeBucket(bucketName, location)
-	if err != nil {
-		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, err := minioClient.BucketExists(bucketName)
-		if err == nil && exists {
-			log.Printf("We already own %s\n", bucketName)
-		} else {
-			log.Fatalln(err)
-		}
-	}
-	log.Printf("Successfully created %s\n", bucketName)
-
-	//TODO: adds a 6 character sha hash to the name so that files of same name don't get overwritten.
-	objectName := fileName
-	contentType := "application/octet-stream"
-
-	// Upload the zip file with FPutObject
-	n, err := minioClient.PutObject(bucketName, objectName, file, contentType)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	log.Printf("Successfully uploaded %s of size %d\n", objectName, n)
-	//Get binaryURL from minio for the object that we just uploaded
-	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
-
-	return url, objectName, nil
-
-}
-
 func createCommandString(url, filename string) string {
 
 	//"wget -O /bin/#{filename} '#url' && chmod +x /bin/{#filename} && {#filename}"
@@ -119,41 +66,4 @@ func getShortHash(f io.Reader) string {
 
 	return key[:6]
 
-}
-
-func CreatePod(cmdstr string) error {
-
-	ports := []map[string]int{
-		map[string]int{
-			"hostPort":      8000,
-			"containerPort": 8000,
-		},
-	}
-	container := Container{"extrasalt/wgettu", "binary", []string{"sh", "-c", cmdstr}, ports}
-	metadata := map[string]string{
-		"name":      "goo",
-		"namespace": "default",
-	}
-	pod := Pod{"Pod", "v1", metadata,
-		map[string][]Container{"containers": []Container{container}}}
-
-	var b []byte
-	reader := bytes.NewBuffer(b)
-	encoder := json.NewEncoder(reader)
-	encoder.SetEscapeHTML(false)
-	encoder.Encode(pod)
-
-	req, err := http.NewRequest("POST", "http://localhost:8001/api/v1/namespaces/default/pods", reader)
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	return nil
 }
