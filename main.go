@@ -1,12 +1,9 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
-	"io"
 	"log"
 	"net/http"
 )
@@ -55,15 +52,5 @@ func createCommandString(url, filename string) string {
 	//"wget -O /bin/#{filename} '#url' && chmod +x /bin/{#filename} && {#filename}"
 
 	return fmt.Sprintf("wget -O /bin/%[2]s '%[1]s' && chmod +x /bin/%[2]s && %[2]s", url, filename)
-
-}
-
-func getShortHash(f io.Reader) string {
-
-	hash := sha256.New()
-	io.Copy(hash, f)
-	key := hex.EncodeToString(hash.Sum(nil))
-
-	return key[:6]
 
 }
