@@ -30,17 +30,18 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
 
 	fileCopy := io.TeeReader(file, buf)
 
-	//TODO: adds a 6 character sha hash to the name so that files of same name don't get overwritten.
+	//Adds a 6 character sha hash to the name so that files of same name don't get overwritten.
 	objectName := fileName + "-" + getShortHash(fileCopy)
 	contentType := "application/octet-stream"
 
-	// Upload the zip file with FPutObject
+	//Upload the file in buffer to minio
 	n, err := minioClient.PutObject(bucketName, objectName, buf, contentType)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	log.Printf("Successfully uploaded %s of size %d\n", objectName, n)
+
 	//Get binaryURL from minio for the object that we just uploaded
 	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
 
