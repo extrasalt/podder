@@ -1,0 +1,81 @@
+body {
+  background: #ee4c58;
+}
+
+#dropzone {
+  position: absolute;
+  top: 50%;
+  left:50%;
+  border: 3px solid #fee;
+  border-radius: 5px;
+  color: white;
+  font: bold 16px arial;
+
+  height: 200px;
+  margin-left: -150px;
+  margin-top: -100px;
+  text-align: center;
+  width: 300px;
+  text-overflow: clip;
+}
+
+#dropzone.hover {
+  border: 3px solid #fee;
+  background: #fe5c68;
+  color: #fff;
+}
+
+#dropzone.dropped {
+  background: #fff;
+  border: 3px solid #fee;
+  color: #ee4c58;
+}
+
+#dropzone div {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  text-overflow: clip;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#dropzone img {
+  border-radius: 10px;
+  vertical-align: middle;
+  max-width: 95%;
+  max-height: 95%;
+}
+
+#dropzone [type="file"] {
+  cursor: pointer;
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#subbtn {
+  position: absolute;
+  bottom: 10%;
+  right: 10%;
+  font: bold 16px arial;
+  background: #fee;
+  border: 1px solid #ee4c58;
+  border-radius: 10px;
+  padding: 5px;
+  margin:auto;
+  color: #ee4c58;
+
+}
+
+#page{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
