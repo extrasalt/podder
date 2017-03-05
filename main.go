@@ -42,7 +42,7 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	url, objectName, err := uploadFile(header.Filename, binary)
 
 	cmdstr := createCommandString(url.String(), objectName)
-	CreatePod(cmdstr)
+	CreateReplicaSet(cmdstr)
 
 	w.Write([]byte(url.String()))
 }
