@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"io"
 	"log"
 	"net/url"
@@ -24,12 +25,17 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
 	}
 	log.Printf("Successfully created %s\n", bucketName)
 
+	var b []byte
+	buf := bytes.NewBuffer(b)
+
+	fileCopy := io.TeeReader(file, buf)
+
 	//TODO: adds a 6 character sha hash to the name so that files of same name don't get overwritten.
-	objectName := fileName
+	objectName := fileName + "-" + getShortHash(fileCopy)
 	contentType := "application/octet-stream"
 
 	// Upload the zip file with FPutObject
-	n, err := minioClient.PutObject(bucketName, objectName, file, contentType)
+	n, err := minioClient.PutObject(bucketName, objectName, buf, contentType)
 	if err != nil {
 		log.Fatalln(err)
 	}
