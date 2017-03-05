@@ -43,12 +43,6 @@ body {
   align-items: center;
 }
 
-#dropzone img {
-  border-radius: 10px;
-  vertical-align: middle;
-  max-width: 95%;
-  max-height: 95%;
-}
 
 #dropzone [type="file"] {
   cursor: pointer;
@@ -62,15 +56,15 @@ body {
 
 #subbtn {
   position: absolute;
-  bottom: 10%;
-  right: 10%;
-  font: bold 16px arial;
+  bottom:0;
+  right:0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
   background: #fee;
-  border: 1px solid #ee4c58;
-  border-radius: 10px;
-  padding: 5px;
+  border: 1px dashed #ee4c58;
+  padding: 1px;
   margin:auto;
-  color: #ee4c58;
 
 }
 
