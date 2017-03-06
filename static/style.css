@@ -1,5 +1,5 @@
 body {
-  background: #ee4c58;
+  background: #e74c3c;
 }
 
 #dropzone {
@@ -19,16 +19,10 @@ body {
   text-overflow: clip;
 }
 
-#dropzone.hover {
-  border: 3px solid #fee;
-  background: #fe5c68;
-  color: #fff;
-}
-
-#dropzone.dropped {
+#dropzone.hover, #dropzone.dropped {
   background: #fff;
   border: 3px solid #fee;
-  color: #ee4c58;
+  color: #e74c3c;
 }
 
 #dropzone div {
