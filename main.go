@@ -44,7 +44,7 @@ func main() {
 	r.HandleFunc("/getbinary", UserBinaryHandler)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":8000", r)
 }
 
 func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
