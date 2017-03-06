@@ -68,7 +68,7 @@ func CreateService() {
 	encoder.SetEscapeHTML(false)
 	encoder.Encode(serv)
 
-	req, err := http.NewRequest("POST", kubehost+"/apis/extensions/v1beta1/namespaces/default/replicasets", reader)
+	req, err := http.NewRequest("POST", kubehost+"/api/v1/namespaces/default/services", reader)
 	if err != nil {
 		panic(err)
 	}
