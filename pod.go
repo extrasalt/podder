@@ -14,12 +14,6 @@
 
 package main
 
-import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-)
-
 type Container struct {
 	Image   string           `json:"image"`
 	Name    string           `json:"name"`
@@ -50,24 +44,9 @@ func CreatePod(cmdstr string) error {
 	pod := Pod{"Pod", "v1", metadata,
 		map[string][]Container{"containers": []Container{container}}}
 
-	var b []byte
-	reader := bytes.NewBuffer(b)
-	encoder := json.NewEncoder(reader)
-	encoder.SetEscapeHTML(false)
-	encoder.Encode(pod)
+	endpoint := "/api/v1/namespaces/default/pods"
 
-	req, err := http.NewRequest("POST", kubehost+"/api/v1/namespaces/default/pods", reader)
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	// req.Header.Set("Authorization", "Bearer " + kubetoken)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+	sendToKube(pod, endpoint)
 
 	return nil
 }

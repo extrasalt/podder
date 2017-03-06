@@ -14,12 +14,6 @@
 
 package main
 
-import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-)
-
 type Metadata struct {
 	Name      string            `json:"name"`
 	Namespace string            `json:"namespace"`
@@ -85,22 +79,7 @@ func CreateReplicaSet(cmdstr string) {
 		},
 	}
 
-	var b []byte
-	reader := bytes.NewBuffer(b)
-	encoder := json.NewEncoder(reader)
-	encoder.SetEscapeHTML(false)
-	encoder.Encode(rs)
+	endpoint := "/apis/extensions/v1beta1/namespaces/default/replicasets"
 
-	req, err := http.NewRequest("POST", kubehost+"/apis/extensions/v1beta1/namespaces/default/replicasets", reader)
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	// req.Header.Set("Authorization", "Bearer " + kubetoken)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+	sendToKube(rs, endpoint)
 }

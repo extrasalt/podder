@@ -13,14 +13,6 @@
 // limitations under the License.
 package main
 
-import (
-	"bytes"
-	"encoding/json"
-	"io"
-	"net/http"
-	"os"
-)
-
 type Service struct {
 	ApiVersion string            `json:"apiVersion"`
 	Kind       string            `json:"kind"`
@@ -62,26 +54,7 @@ func CreateService() {
 		Spec: spec,
 	}
 
-	var b []byte
-	reader := bytes.NewBuffer(b)
-	encoder := json.NewEncoder(reader)
-	encoder.SetEscapeHTML(false)
-	encoder.Encode(serv)
-
-	req, err := http.NewRequest("POST", kubehost+"/api/v1/namespaces/default/services", reader)
-	if err != nil {
-		panic(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	// req.Header.Set("Authorization", "Bearer " + kubetoken)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		panic(err)
-	}
-
-	defer resp.Body.Close()
-
-	io.Copy(os.Stdout, resp.Body)
+	endpoint := "/api/v1/namespaces/default/services"
+	sendToKube(serv, endpoint)
 
 }
