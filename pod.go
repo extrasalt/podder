@@ -61,6 +61,7 @@ func CreatePod(cmdstr string) error {
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	// req.Header.Set("Authorization", "Bearer " + kubetoken)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
