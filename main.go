@@ -59,6 +59,7 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 
 	cmdstr := createCommandString(url.String(), objectName)
 	CreateReplicaSet(cmdstr)
+	CreateService()
 
 	w.Write([]byte(url.String()))
 }
