@@ -20,12 +20,15 @@ import (
 	"github.com/minio/minio-go"
 	"log"
 	"net/http"
+	"os"
 )
 
 var minioClient *minio.Client
 var err error
 
-var kubehost = "http://localhost:8001"
+var (
+	kubehost = "http://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
+)
 
 func main() {
 
