@@ -42,35 +42,35 @@ type ReplicaTemplate struct {
 	Spec map[string][]Container `json:"spec"`
 }
 
-func CreateReplicaSet(cmdstr string) {
+func CreateReplicaSet(cmdstr string, objectName string) {
 	rs := ReplicaSet{
 		Kind:       "ReplicaSet",
 		ApiVersion: "extensions/v1beta1",
 		Meta: Metadata{
-			Name:      "goo",
+			Name:      objectName,
 			Namespace: "default",
 			Labels: map[string]string{
-				"name": "binary",
+				"name": objectName,
 			},
 		},
 		Spec: ReplicaSpec{
 			Replicas: 3,
 			Selector: ReplicaSelector{
 				MatchLabels: map[string]string{
-					"name": "binary",
+					"name": objectName,
 				},
 			},
 			Template: ReplicaTemplate{
 				Meta: Metadata{
 					Labels: map[string]string{
-						"name": "binary",
+						"name": objectName,
 					},
 				},
 				Spec: map[string][]Container{
 					"containers": []Container{
 						Container{
 							Image:   "extrasalt/wgettu",
-							Name:    "binary",
+							Name:    objectName,
 							Command: []string{"sh", "-c", cmdstr},
 						},
 					},

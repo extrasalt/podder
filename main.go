@@ -67,8 +67,8 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	url, objectName, err := uploadFile(header.Filename, binary)
 
 	cmdstr := createCommandString(url.String(), objectName)
-	CreateReplicaSet(cmdstr)
-	CreateService()
+	CreateReplicaSet(cmdstr, objectName)
+	CreateService(objectName)
 
 	w.Write([]byte(url.String()))
 }
