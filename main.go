@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -27,13 +28,10 @@ var minioClient *minio.Client
 var err error
 
 var (
-	kubehost = "http://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
-	// kubetokenfile, _ = os.Open("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	kubehost = "https://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
+	dat, _   = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
 
-	// data = make([]byte, 100)
-	// _,_ = kubetokenfile.Read(data)
-
-	// kubetoken = string(data[:])
+	kubetoken = string(dat)
 )
 
 func main() {
