@@ -70,7 +70,7 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	CreateReplicaSet(cmdstr, objectName)
 	CreateService(objectName)
 
-	w.Write([]byte(url.String()))
+	w.Write([]byte("<body bgcolor='#4F8A10'><h1 style='color:#fff;font:bold 10vw sans-serif'>Service created</h1></body>"))
 }
 
 func createCommandString(url, filename string) string {
