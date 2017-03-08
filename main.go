@@ -15,10 +15,11 @@
 package main
 
 import (
+	_ "encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
-	"io"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -97,5 +98,14 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer resp.Body.Close()
 
-	io.Copy(w, resp.Body)
+	// decoder := json.NewDecoder(resp.Body)
+	// decoder.decode(nil)
+
+	tmpl, err := template.ParseFiles("templates/services.html")
+
+	if err != nil {
+		panic(err)
+	}
+
+	tmpl.Execute(w, nil)
 }
