@@ -15,15 +15,20 @@
 package main
 
 import (
-	_ "encoding/json"
+	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 )
+
+type ServiceList struct {
+	Items []Service `json:"items"`
+}
 
 var minioClient *minio.Client
 var err error
@@ -100,8 +105,22 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer resp.Body.Close()
 
-	// decoder := json.NewDecoder(resp.Body)
-	// decoder.decode(nil)
+	data, err := ioutil.ReadAll(resp.Body)
+
+	fmt.Printf("%v", string(data))
+
+	if err != nil {
+		panic(err)
+	}
+
+	servicelist := ServiceList{}
+	err = json.Unmarshal(data, &servicelist)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%v", servicelist)
 
 	tmpl, err := template.ParseFiles("templates/services.html")
 
@@ -109,5 +128,5 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	tmpl.Execute(w, nil)
+	tmpl.Execute(w, servicelist)
 }

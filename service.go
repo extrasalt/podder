@@ -14,10 +14,10 @@
 package main
 
 type Service struct {
-	ApiVersion string            `json:"apiVersion"`
-	Kind       string            `json:"kind"`
-	Meta       map[string]string `json:"metadata"`
-	Spec       ServiceSpec       `json:"spec"`
+	ApiVersion string          `json:"apiVersion"`
+	Kind       string          `json:"kind"`
+	Meta       ServiceMetadata `json:"metadata"`
+	Spec       ServiceSpec     `json:"spec"`
 }
 
 type ServiceSpec struct {
@@ -29,6 +29,11 @@ type ServiceSpec struct {
 type ServicePort struct {
 	Port     int    `json:"port"`
 	Protocol string `json:"protocol"`
+	NodePort int    `json:"nodePort"`
+}
+
+type ServiceMetadata struct {
+	Name string `json:"name"`
 }
 
 func CreateService(objectName string) {
@@ -48,8 +53,8 @@ func CreateService(objectName string) {
 	serv := Service{
 		ApiVersion: "v1",
 		Kind:       "Service",
-		Meta: map[string]string{
-			"name": objectName,
+		Meta: ServiceMetadata{
+			Name: objectName,
 		},
 		Spec: spec,
 	}
