@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -51,6 +52,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/getbinary", UserBinaryHandler)
+	r.HandleFunc("/services", ListServicesHandler)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.ListenAndServe(":8000", r)
@@ -79,4 +81,21 @@ func createCommandString(url, filename string) string {
 
 	return fmt.Sprintf("wget -O /bin/%[2]s '%[1]s' && chmod +x /bin/%[2]s && %[2]s", url, filename)
 
+}
+
+func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
+	req, err := http.NewRequest("GET", kubehost+"/api/v1/namespaces/default/services", nil)
+	if err != nil {
+		panic(err)
+	}
+	// req.Header.Set("Authorization", "Bearer " + kubetoken)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	defer resp.Body.Close()
+
+	io.Copy(w, resp.Body)
 }
