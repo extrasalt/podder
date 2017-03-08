@@ -31,10 +31,10 @@ type ServicePort struct {
 	Protocol string `json:"protocol"`
 }
 
-func CreateService() {
+func CreateService(objectName string) {
 	spec := ServiceSpec{
 		Selector: map[string]string{
-			"name": "binary",
+			"name": objectName,
 		},
 		ServiceType: "NodePort",
 		Ports: []ServicePort{
@@ -49,7 +49,7 @@ func CreateService() {
 		ApiVersion: "v1",
 		Kind:       "Service",
 		Meta: map[string]string{
-			"name": "gooo",
+			"name": objectName,
 		},
 		Spec: spec,
 	}

@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/minio/minio-go"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -49,6 +50,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/getbinary", UserBinaryHandler)
+	r.HandleFunc("/services", ListServicesHandler)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.ListenAndServe(":8000", r)
@@ -65,10 +67,12 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	url, objectName, err := uploadFile(header.Filename, binary)
 
 	cmdstr := createCommandString(url.String(), objectName)
-	CreateReplicaSet(cmdstr)
-	CreateService()
+	CreateReplicaSet(cmdstr, objectName)
+	CreateService(objectName)
 
-	w.Write([]byte(url.String()))
+	//TODO: Check errors and return back to the start page if there's a problem
+
+	http.Redirect(w, r, "/services", 302)
 }
 
 func createCommandString(url, filename string) string {
@@ -77,4 +81,21 @@ func createCommandString(url, filename string) string {
 
 	return fmt.Sprintf("wget -O /bin/%[2]s '%[1]s' && chmod +x /bin/%[2]s && %[2]s", url, filename)
 
+}
+
+func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
+	req, err := http.NewRequest("GET", kubehost+"/api/v1/namespaces/default/services", nil)
+	if err != nil {
+		panic(err)
+	}
+	// req.Header.Set("Authorization", "Bearer " + kubetoken)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	defer resp.Body.Close()
+
+	io.Copy(w, resp.Body)
 }
