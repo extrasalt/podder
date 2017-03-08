@@ -1,3 +1,5 @@
-hello services
-
-{{.Name}}
+{{range .Items}}
+{{.Meta.Name}}
+{{$ports := index .Ports 0}}
+{{.ports.NodePort}}
+{{end}}

@@ -120,7 +120,7 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	fmt.Printf("%v", servicelist)
+	fmt.Printf("%+v", servicelist)
 
 	tmpl, err := template.ParseFiles("templates/services.html")
 
