@@ -16,6 +16,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -30,14 +31,20 @@ func sendToKube(obj interface{}, endpoint string) {
 	encoder.SetEscapeHTML(false)
 	encoder.Encode(obj)
 
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	client := &http.Client{Transport: transport}
+
 	req, err := http.NewRequest("POST", kubehost+endpoint, reader)
 	if err != nil {
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	// req.Header.Set("Authorization", "Bearer " + kubetoken)
+	req.Header.Set("Authorization", "Bearer "+kubetoken)
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
