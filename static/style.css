@@ -1,5 +1,7 @@
 body {
   background: #e74c3c;
+  color: white;
+  font: bold 16px arial;
 }
 
 #dropzone {
@@ -64,7 +66,29 @@ body {
 }
 
 #page{
+  width: 100%;
+  max-width: 800px;
+  padding: 40px;
+  margin: auto;
+  padding-top: 40px;
+} 
+
+
+.service{
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
+
+  width: 100%;
+}
+
+.service:hover {
+  background: #f74c3c;
+}
+
+.name, .port{
+  font-size: 3vw;
+  border-bottom: 3px solid #f74c3c;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 50%;
 }
