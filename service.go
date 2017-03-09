@@ -13,6 +13,10 @@
 // limitations under the License.
 package main
 
+import (
+	"fmt"
+)
+
 type Service struct {
 	ApiVersion string          `json:"apiVersion"`
 	Kind       string          `json:"kind"`
@@ -59,7 +63,7 @@ func CreateService(objectName string) {
 		Spec: spec,
 	}
 
-	endpoint := "/api/v1/namespaces/default/services"
+	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", "default")
 	sendToKube(serv, endpoint)
 
 }

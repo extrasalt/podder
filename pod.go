@@ -14,6 +14,10 @@
 
 package main
 
+import (
+	"fmt"
+)
+
 type Container struct {
 	Image   string           `json:"image"`
 	Name    string           `json:"name"`
@@ -44,7 +48,7 @@ func CreatePod(cmdstr string) error {
 	pod := Pod{"Pod", "v1", metadata,
 		map[string][]Container{"containers": []Container{container}}}
 
-	endpoint := "/api/v1/namespaces/default/pods"
+	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/pods", "default")
 
 	sendToKube(pod, endpoint)
 
