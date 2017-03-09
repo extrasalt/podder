@@ -42,10 +42,10 @@ var err error
 var DB *sql.DB
 
 var (
-	kubehost = "https://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
-	dat, _   = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	kubehost = "http://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
+	// dat, _   = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
 
-	kubetoken = string(dat)
+	// kubetoken = string(dat)
 )
 
 func main() {
