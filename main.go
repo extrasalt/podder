@@ -30,6 +30,11 @@ type ServiceList struct {
 	Items []Service `json:"items"`
 }
 
+type ServiceResponse struct {
+	Name string
+	Port int
+}
+
 var minioClient *minio.Client
 var err error
 
@@ -107,7 +112,7 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 
 	data, err := ioutil.ReadAll(resp.Body)
 
-	fmt.Printf("%v", string(data))
+	// fmt.Printf("%v", string(data))
 
 	if err != nil {
 		panic(err)
@@ -120,7 +125,15 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	fmt.Printf("%+v", servicelist)
+	var responselist []ServiceResponse
+	for _, service := range servicelist.Items {
+		var resp ServiceResponse
+		resp.Name = service.Meta.Name
+		resp.Port = service.Spec.Ports[0].NodePort
+		responselist = append(responselist, resp)
+	}
+
+	fmt.Printf("%+v", responselist)
 
 	tmpl, err := template.ParseFiles("templates/services.html")
 
@@ -128,5 +141,5 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	tmpl.Execute(w, servicelist)
+	tmpl.Execute(w, responselist)
 }

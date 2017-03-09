@@ -1,5 +1,4 @@
-{{range .Items}}
-{{.Meta.Name}}
-{{$ports := index .Ports 0}}
-{{.ports.NodePort}}
+{{range .}}
+	{{.Name}}
+	{{.Port}}
 {{end}}
