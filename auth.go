@@ -47,7 +47,7 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	CreateNamespace(username)
 
-	http.Redirect(w, r, "/", 302)
+	http.Redirect(w, r, "/login.html", 302)
 }
 
 func authorize(username string, password string) (autherr error) {
