@@ -42,10 +42,10 @@ var err error
 var DB *sql.DB
 
 var (
-	kubehost = "https://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
-	dat, _   = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	kubehost = "http://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
+	// dat, _   = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
 
-	kubetoken = string(dat)
+	// kubetoken = string(dat)
 )
 
 func main() {
@@ -91,10 +91,12 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	url, objectName, err := uploadFile(header.Filename, binary)
+	cookie, _ := r.Cookie("rcs")
+	ns := cookie.Value
 
 	cmdstr := createCommandString(url.String(), objectName)
-	CreateReplicaSet(cmdstr, objectName)
-	CreateService(objectName)
+	CreateReplicaSet(cmdstr, objectName, ns)
+	CreateService(objectName, ns)
 
 	//TODO: Check errors and return back to the start page if there's a problem
 
@@ -110,7 +112,11 @@ func createCommandString(url, filename string) string {
 }
 
 func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
-	req, err := http.NewRequest("GET", kubehost+"/api/v1/namespaces/default/services", nil)
+	cookie, _ := r.Cookie("rcs")
+	ns := cookie.Value
+
+	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", ns)
+	req, err := http.NewRequest("GET", kubehost+endpoint, nil)
 	if err != nil {
 		panic(err)
 	}

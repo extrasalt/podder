@@ -44,6 +44,9 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	_, err = DB.Exec("insert into login values($1, $2)", username, hashedPassword)
+
+	CreateNamespace(username)
+
 	http.Redirect(w, r, "/", 302)
 }
 

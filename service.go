@@ -40,7 +40,7 @@ type ServiceMetadata struct {
 	Name string `json:"name"`
 }
 
-func CreateService(objectName string) {
+func CreateService(objectName string, namespace string) {
 	spec := ServiceSpec{
 		Selector: map[string]string{
 			"name": objectName,
@@ -63,7 +63,7 @@ func CreateService(objectName string) {
 		Spec: spec,
 	}
 
-	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", "default")
+	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", namespace)
 	sendToKube(serv, endpoint)
 
 }
