@@ -2,17 +2,17 @@ package main
 
 import (
 	"fmt"
-
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	//Gets the username and password from the form data
+	//Checks the validity of it. And sets cookie if valid.
 	err := r.ParseForm()
 	if err != nil {
 		panic(err)
 	}
-
 	username := r.Form["name"][0]
 	password := r.Form["password"][0]
 
@@ -28,6 +28,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignUpHandler(w http.ResponseWriter, r *http.Request) {
+
+	//Obtains username and password from the form
+	//Generates bcrypt password
+	//Inserts the username and hashed password into db
+	//Creates a k8s namespace for the new user
+	//Redirects the user back to the login page so that
+	//he can login.
 
 	err := r.ParseForm()
 
@@ -51,6 +58,8 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func authorize(username string, password string) (autherr error) {
+	//Looks up the username and password in the database
+	//check its validity
 
 	var dbpassword string
 

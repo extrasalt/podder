@@ -22,6 +22,10 @@ import (
 
 func getShortHash(f io.Reader) string {
 
+	//Takes the file content
+	//creates a sha256 hash
+	//Returns only the first 6 digits.
+
 	hash := sha256.New()
 	io.Copy(hash, f)
 	key := hex.EncodeToString(hash.Sum(nil))

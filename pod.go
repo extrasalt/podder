@@ -34,6 +34,11 @@ type Pod struct {
 
 func CreatePod(cmdstr string, namespace string) error {
 
+	//Creates a pod by constructing a golang object
+	//of the required type signature and marshalls it
+	//and sends it to the kubernetes api endpoint with
+	//the specified namespace
+
 	ports := []map[string]int{
 		map[string]int{
 			"hostPort":      8000,
@@ -49,8 +54,6 @@ func CreatePod(cmdstr string, namespace string) error {
 		map[string][]Container{"containers": []Container{container}}}
 
 	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/pods", namespace)
-
 	sendToKube(pod, endpoint)
-
 	return nil
 }

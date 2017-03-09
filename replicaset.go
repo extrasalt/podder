@@ -47,6 +47,11 @@ type ReplicaTemplate struct {
 }
 
 func CreateReplicaSet(cmdstr string, objectName string, namespace string) {
+	//Creates a replicaset by constructing a golang object
+	//of the required type signature and marshalls it
+	//and sends it to the kubernetes api endpoint with
+	//the specified namespace
+
 	rs := ReplicaSet{
 		Kind:       "ReplicaSet",
 		ApiVersion: "extensions/v1beta1",
@@ -84,6 +89,5 @@ func CreateReplicaSet(cmdstr string, objectName string, namespace string) {
 	}
 
 	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets", namespace)
-
 	sendToKube(rs, endpoint)
 }

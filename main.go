@@ -60,7 +60,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	//Test bed values. Replace with real minio address and keys
+	//Testbed values. Replace with real minio address and keys
 	endpoint := "play.minio.io:9000"
 	accessKeyID := "Q3AM3UQ867SPQQA43P2F"
 	secretAccessKey := "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
@@ -83,6 +83,11 @@ func main() {
 }
 
 func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
+	//Gets the [golang] binary from the user
+	//Uploads it to a bucket and get a public url
+	//Creates command string from the object name and url
+	//Creates replicasets and kubernetes service
+
 	r.ParseMultipartForm(32 << 20)
 	binary, header, err := r.FormFile("upload")
 
@@ -105,13 +110,18 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 
 func createCommandString(url, filename string) string {
 
+	//Creates a command string in shell format that resolves down to the following format
 	//"wget -O /bin/#{filename} '#url' && chmod +x /bin/{#filename} && {#filename}"
 
 	return fmt.Sprintf("wget -O /bin/%[2]s '%[1]s' && chmod +x /bin/%[2]s && %[2]s", url, filename)
-
 }
 
 func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
+	//Shows a list of Services owned by the current user.
+	//Gets the current user information from the cookie
+	//and GETs from kubernetes api the services pertaining
+	//to the user's namespace.
+
 	cookie, _ := r.Cookie("rcs")
 	ns := cookie.Value
 
@@ -131,8 +141,6 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 
 	data, err := ioutil.ReadAll(resp.Body)
 
-	// fmt.Printf("%v", string(data))
-
 	if err != nil {
 		panic(err)
 	}
@@ -144,6 +152,8 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	//Create a separate response list object
+	//to make templating easier.
 	var responselist []ServiceResponse
 	for _, service := range servicelist.Items {
 		var resp ServiceResponse
@@ -152,21 +162,16 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		responselist = append(responselist, resp)
 	}
 
-	fmt.Printf("%+v", responselist)
-
 	tmpl, err := template.ParseFiles("templates/services.html")
-
 	if err != nil {
 		panic(err)
 	}
-
 	tmpl.Execute(w, responselist)
 }
 
 func WhoAmiHandler(w http.ResponseWriter, r *http.Request) {
-
+	//Reads username from cookie and prints it to Response
 	cookie, _ := r.Cookie("rcs")
-
 	w.Write([]byte(cookie.Value))
 
 }

@@ -12,6 +12,10 @@ type NamespaceMeta struct {
 }
 
 func CreateNamespace(name string) {
+	//Creates the namespace for the given value
+	//and sends it to kubernetes api
+	//by calling the function
+
 	ns := Namespace{
 		Kind:       "Namespace",
 		ApiVersion: "v1",
@@ -27,6 +31,7 @@ func CreateNamespace(name string) {
 	sendToKube(ns, endpoint)
 }
 
+// *Reference*
 // {
 //   "kind": "Namespace",
 //   "apiVersion": "v1",

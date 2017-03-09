@@ -23,13 +23,17 @@ import (
 )
 
 func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
+	//Uploads the given file to the minio server
+	//and returns a url and object name of the
+	//uploaded file
 
+	//Tip: As given in docs. Might change when we use our own server
 	bucketName := "binary"
-	location := "us-east-1" //As given in docs. Might change when we use our own server
+	location := "us-east-1"
 
 	err = minioClient.MakeBucket(bucketName, location)
 	if err != nil {
-		// Check to see if we already own this bucket (which happens if you run this twice)
+		// Check to see if we already own this bucket
 		exists, err := minioClient.BucketExists(bucketName)
 		if err == nil && exists {
 			log.Printf("We already own %s\n", bucketName)
@@ -44,7 +48,8 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
 
 	fileCopy := io.TeeReader(file, buf)
 
-	//Adds a 6 character sha hash to the name so that files of same name don't get overwritten.
+	//Adds a 6 character sha hash to the name so
+	//that files of same name don't get overwritten.
 	objectName := fileName + "-" + getShortHash(fileCopy)
 	contentType := "application/octet-stream"
 
@@ -56,7 +61,8 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
 
 	log.Printf("Successfully uploaded %s of size %d\n", objectName, n)
 
-	//Get binaryURL from minio for the object that we just uploaded
+	//Get binaryURL from minio for
+	//the object that we just uploaded
 	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
 
 	return url, objectName, nil

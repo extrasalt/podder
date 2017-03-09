@@ -25,6 +25,9 @@ import (
 
 func sendToKube(obj interface{}, endpoint string) {
 
+	//Gets various kubernetes objects, marshalls them and
+	//sends them to the kubernetes api
+
 	var b []byte
 	reader := bytes.NewBuffer(b)
 	encoder := json.NewEncoder(reader)

@@ -41,6 +41,14 @@ type ServiceMetadata struct {
 }
 
 func CreateService(objectName string, namespace string) {
+	//Creates a service by constructing a golang object
+	//of the required type signature and marshalls it
+	//and sends it to the kubernetes api endpoint with
+	//the specified namespace
+
+	//Plants the upload binary objectname in different
+	//fields in the go object
+
 	spec := ServiceSpec{
 		Selector: map[string]string{
 			"name": objectName,
