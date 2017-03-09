@@ -52,7 +52,7 @@ func CreateReplicaSet(cmdstr string, objectName string, namespace string) {
 		ApiVersion: "extensions/v1beta1",
 		Meta: Metadata{
 			Name:      objectName,
-			Namespace: "default",
+			Namespace: namespace,
 			Labels: map[string]string{
 				"name": objectName,
 			},

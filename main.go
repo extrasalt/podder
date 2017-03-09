@@ -91,10 +91,12 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	url, objectName, err := uploadFile(header.Filename, binary)
+	cookie, _ := r.Cookie("rcs")
+	ns := cookie.Value
 
 	cmdstr := createCommandString(url.String(), objectName)
-	CreateReplicaSet(cmdstr, objectName, "default")
-	CreateService(objectName, "default")
+	CreateReplicaSet(cmdstr, objectName, ns)
+	CreateService(objectName, ns)
 
 	//TODO: Check errors and return back to the start page if there's a problem
 
@@ -110,8 +112,10 @@ func createCommandString(url, filename string) string {
 }
 
 func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, _ := r.Cookie("rcs")
+	ns := cookie.Value
 
-	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", "default")
+	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", ns)
 	req, err := http.NewRequest("GET", kubehost+endpoint, nil)
 	if err != nil {
 		panic(err)
