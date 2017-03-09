@@ -15,9 +15,11 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 	"github.com/minio/minio-go"
 	"html/template"
 	"io/ioutil"
@@ -37,6 +39,7 @@ type ServiceResponse struct {
 
 var minioClient *minio.Client
 var err error
+var DB *sql.DB
 
 var (
 	kubehost = "https://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
@@ -46,6 +49,16 @@ var (
 )
 
 func main() {
+
+	var err error
+	DB, err = sql.Open("postgres", "password=password  user=user dbname=my_db sslmode=disable")
+	if err != nil {
+		fmt.Println(err)
+	}
+	_, err = DB.Exec("CREATE TABLE IF NOT EXISTS login(name varchar, password varchar)")
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	//Test bed values. Replace with real minio address and keys
 	endpoint := "play.minio.io:9000"
@@ -61,6 +74,8 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/getbinary", UserBinaryHandler)
 	r.HandleFunc("/services", ListServicesHandler)
+	r.HandleFunc("/login", LoginHandler)
+	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.ListenAndServe(":8000", r)
@@ -139,4 +154,8 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.Execute(w, responselist)
+}
+
+func PrintTokenHandler(w http.ResponseWriter, r *http.Request) {
+
 }
