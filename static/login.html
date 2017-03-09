@@ -1,0 +1,50 @@
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+	
+    <div id="centerdiv">   
+    <form id="mainform" action="login" method="post">
+        <input type="textfield" name="name" placeholder="Username" id="username">
+        <input type="password" name="password" placeholder="Password" id="pw">
+        <input type="password" name="confirm_password" placeholder="Confirm Password" id="cpw">
+        <input id="submitButton" type="submit" value="Login">
+    </form>
+    </div> 
+
+    <button id="toggle">Sign up</button>
+
+    <script type="text/javascript">
+    	var form = document.getElementById("mainform");
+    	var submitButton = document.getElementById("submitButton");
+    	var toggle = document.getElementById("toggle")
+    	var cpw = document.getElementById("cpw")
+    	var pw = document.getElementById("pw")
+    	var username = document.getElementById("username")
+    	toggle.onclick = function(e){
+    		if (toggle.innerHTML == "Sign up"){
+    			toggle.innerHTML = "Login"
+    			form.action = "signup"
+    			submitButton.value = "Sign up"
+    			cpw.style.display = "block"
+    			submitButton.style.display = "none";
+    		} else {
+    			toggle.innerHTML = "Sign up"
+    			form.action = "login"
+    			submitButton.value = "Login"
+    			cpw.style.display = "none"
+    			submitButton.style.display = "inline"
+    		}
+    		
+    	}
+    	form.onkeyup = function(){ 
+	    	if(pw.value == cpw.value && username.value != "" && pw.value != "") {
+	    		submitButton.style.display = "inline"
+	    	}
+    	}
+		
+	</script>    
+</body>
+</html>
