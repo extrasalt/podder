@@ -76,6 +76,7 @@ func main() {
 	r.HandleFunc("/services", ListServicesHandler)
 	r.HandleFunc("/login", LoginHandler)
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
+	r.HandleFunc("/whoami", WhoAmiHandler)
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.ListenAndServe(":8000", r)
@@ -156,6 +157,10 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, responselist)
 }
 
-func PrintTokenHandler(w http.ResponseWriter, r *http.Request) {
+func WhoAmiHandler(w http.ResponseWriter, r *http.Request) {
+
+	cookie, _ := r.Cookie("rcs")
+
+	w.Write([]byte(cookie.Value))
 
 }
