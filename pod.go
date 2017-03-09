@@ -32,7 +32,7 @@ type Pod struct {
 	Spec       map[string][]Container `json:"spec"`
 }
 
-func CreatePod(cmdstr string) error {
+func CreatePod(cmdstr string, namespace string) error {
 
 	ports := []map[string]int{
 		map[string]int{
@@ -48,7 +48,7 @@ func CreatePod(cmdstr string) error {
 	pod := Pod{"Pod", "v1", metadata,
 		map[string][]Container{"containers": []Container{container}}}
 
-	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/pods", "default")
+	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/pods", namespace)
 
 	sendToKube(pod, endpoint)
 

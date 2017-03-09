@@ -46,7 +46,7 @@ type ReplicaTemplate struct {
 	Spec map[string][]Container `json:"spec"`
 }
 
-func CreateReplicaSet(cmdstr string, objectName string) {
+func CreateReplicaSet(cmdstr string, objectName string, namespace string) {
 	rs := ReplicaSet{
 		Kind:       "ReplicaSet",
 		ApiVersion: "extensions/v1beta1",
@@ -83,7 +83,7 @@ func CreateReplicaSet(cmdstr string, objectName string) {
 		},
 	}
 
-	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets", "default")
+	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets", namespace)
 
 	sendToKube(rs, endpoint)
 }
