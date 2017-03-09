@@ -14,6 +14,10 @@
 
 package main
 
+import (
+	"fmt"
+)
+
 type Metadata struct {
 	Name      string            `json:"name"`
 	Namespace string            `json:"namespace"`
@@ -79,7 +83,7 @@ func CreateReplicaSet(cmdstr string, objectName string) {
 		},
 	}
 
-	endpoint := "/apis/extensions/v1beta1/namespaces/default/replicasets"
+	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets", "default")
 
 	sendToKube(rs, endpoint)
 }
