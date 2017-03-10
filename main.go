@@ -72,11 +72,11 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/getbinary", UserBinaryHandler)
-	r.HandleFunc("/services", ListServicesHandler)
+	r.HandleFunc("/getbinary", authenticate(UserBinaryHandler))
+	r.HandleFunc("/services", authenticate(ListServicesHandler))
 	r.HandleFunc("/login", LoginHandler)
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
-	r.HandleFunc("/whoami", WhoAmiHandler)
+	r.HandleFunc("/whoami", authenticate(WhoAmiHandler))
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
 
 	http.ListenAndServe(":8000", r)
@@ -173,5 +173,19 @@ func WhoAmiHandler(w http.ResponseWriter, r *http.Request) {
 	//Reads username from cookie and prints it to Response
 	cookie, _ := r.Cookie("rcs")
 	w.Write([]byte(cookie.Value))
+
+}
+
+func authenticate(next http.HandlerFunc) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, err := r.Cookie("rcs")
+		if err != nil {
+			http.Redirect(w, r, "/login.html", 302)
+		} else {
+			next(w, r)
+		}
+
+	}
 
 }
