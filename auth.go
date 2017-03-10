@@ -21,7 +21,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		cookie := &http.Cookie{Name: "rcs", Value: username, MaxAge: 3600, Secure: false, HttpOnly: true, Raw: username}
 		http.SetCookie(w, cookie)
-		w.Write([]byte("authenticated"))
+		http.Redirect(w, r, "/", 302)
 	} else {
 		w.Write([]byte("Wrong password"))
 	}
