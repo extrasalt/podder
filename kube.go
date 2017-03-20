@@ -45,7 +45,7 @@ func sendToKube(obj interface{}, endpoint string) {
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	// req.Header.Set("Authorization", "Bearer "+kubetoken)
+	req.Header.Set("Authorization", "Bearer "+kubetoken)
 
 	resp, err := client.Do(req)
 	if err != nil {

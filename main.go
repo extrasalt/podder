@@ -15,17 +15,19 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
-	"github.com/minio/minio-go"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
+	"github.com/minio/minio-go"
 )
 
 type ServiceList struct {
@@ -42,16 +44,16 @@ var err error
 var DB *sql.DB
 
 var (
-	kubehost = "http://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
-	// dat, _   = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	kubehost = "https://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
+	dat, _   = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
 
-	// kubetoken = string(dat)
+	kubetoken = string(dat)
 )
 
 func main() {
 
 	var err error
-	DB, err = sql.Open("postgres", "password=password  user=user dbname=my_db sslmode=disable")
+	DB, err = sql.Open("postgres", "postgres://user:password@10.0.0.86/my_db?sslmode=disable")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -130,9 +132,15 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	// req.Header.Set("Authorization", "Bearer " + kubetoken)
+	req.Header.Set("Authorization", "Bearer "+kubetoken)
 
-	resp, err := http.DefaultClient.Do(req)
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	client := &http.Client{Transport: transport}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
