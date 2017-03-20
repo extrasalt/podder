@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -56,4 +57,51 @@ func sendToKube(obj interface{}, endpoint string) {
 
 	io.Copy(os.Stdout, resp.Body)
 
+}
+
+func deleteApp(name, namespace string) {
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+
+	client := &http.Client{Transport: transport}
+
+	//TODO: Scale replicaset to 0
+
+	//delete replicaset
+	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/", namespace)
+
+	req, err := http.NewRequest("DELETE", kubehost+endpoint+name, nil)
+	if err != nil {
+		panic(err)
+	}
+	req.Header.Set("Authorization", "Bearer "+kubetoken)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	defer resp.Body.Close()
+
+	io.Copy(os.Stdout, resp.Body)
+
+	//delete service
+
+	endpoint = fmt.Sprintf("/api/v1/namespaces/%s/services/", namespace)
+
+	req, err = http.NewRequest("DELETE", kubehost+endpoint+name, nil)
+	if err != nil {
+		panic(err)
+	}
+	req.Header.Set("Authorization", "Bearer "+kubetoken)
+
+	resp, err = client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	defer resp.Body.Close()
+
+	io.Copy(os.Stdout, resp.Body)
 }

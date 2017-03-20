@@ -74,6 +74,7 @@ func main() {
 	}
 
 	r := mux.NewRouter()
+	r.HandleFunc("/delete/{name}", authenticate(DeleteAppHandler))
 	r.HandleFunc("/getbinary", authenticate(UserBinaryHandler))
 	r.HandleFunc("/services", authenticate(ListServicesHandler))
 	r.HandleFunc("/login", LoginHandler)
@@ -195,5 +196,17 @@ func authenticate(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 	}
+
+}
+
+func DeleteAppHandler(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	name := vars["name"]
+
+	cookie, _ := r.Cookie("rcs")
+	deleteApp(name, cookie.Value)
+
+	http.Redirect(w, r, "/services", 302)
 
 }
