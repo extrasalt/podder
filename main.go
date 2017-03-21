@@ -24,6 +24,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -74,6 +75,7 @@ func main() {
 	}
 
 	r := mux.NewRouter()
+	r.HandleFunc("/scale/{name}/{count}", authenticate(ScaleAppHandler))
 	r.HandleFunc("/delete/{name}", authenticate(DeleteAppHandler))
 	r.HandleFunc("/getbinary", authenticate(UserBinaryHandler))
 	r.HandleFunc("/services", authenticate(ListServicesHandler))
@@ -209,4 +211,21 @@ func DeleteAppHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/services", 302)
 
+}
+
+func ScaleAppHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	name := vars["name"]
+	countString := vars["count"]
+	count, err := strconv.Atoi(countString)
+	if err != nil {
+		panic(err)
+	}
+
+	cookie, _ := r.Cookie("rcs")
+	namespace := cookie.Value
+
+	scaleApp(namespace, name, count)
+
+	http.Redirect(w, r, "/services", 302)
 }
