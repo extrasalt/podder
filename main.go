@@ -67,8 +67,8 @@ func main() {
 
 	//HARDCODED values. Replace after fixing DNS
 	endpoint := "10.0.0.189:9000"
-	accessKeyID := "CK07433U5QNCM9AT6XB5"
-	secretAccessKey := "GoPgcppO0D2K3f0ndpj6ILzgAimltBty/Aemwf0B"
+	accessKeyID := "ZIWVAZORHJM8G1MWREFN"
+	secretAccessKey := "71KfvEleDVwMsl7tbmQmng6sa4JYcZJu647BjKpK"
 	useSSL := false
 
 	minioClient, err = minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
