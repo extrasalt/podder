@@ -10,7 +10,7 @@
 
 		{{range .}}
 		<div class="service">
-			<div class="name">{{.Name}} <a href="/delete/{{.Name}}">x</a></div>
+			<div class="name">{{.Name}} <a href="/delete/{{.Name}}" class="deletebutton">x</a></div>
 			<div class="port">{{.Port}}</div>
 		</div>
 		{{end}}
