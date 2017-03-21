@@ -126,9 +126,9 @@ func getScale(namespace, name string) (*Scale, error) {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: transport}
-	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/scale/", namespace)
+	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/%s/scale", namespace, name)
 
-	req, err := http.NewRequest("GET", kubehost+endpoint+name, nil)
+	req, err := http.NewRequest("GET", kubehost+endpoint, nil)
 	if err != nil {
 		panic(err)
 	}
@@ -149,6 +149,8 @@ func getScale(namespace, name string) (*Scale, error) {
 	if err != nil {
 		return nil, err
 	}
+	fmt.Printf("SCALE: %v", scale)
+
 	return &scale, nil
 }
 
@@ -159,7 +161,7 @@ func scaleApp(namespace, name string, count int) error {
 	}
 	scale.Spec.Replicas = int64(count)
 
-	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/scale/%s", namespace, name)
+	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/%s/scale", namespace, name)
 	sendToKube(scale, endpoint)
 
 	return nil
