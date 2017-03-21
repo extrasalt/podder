@@ -80,11 +80,11 @@ func main() {
 	r.HandleFunc("/scale/{name}/{count}", authenticate(ScaleAppHandler))
 	r.HandleFunc("/delete/{name}", authenticate(DeleteAppHandler))
 	r.HandleFunc("/getbinary", authenticate(UserBinaryHandler))
-	r.HandleFunc("/services", authenticate(ListServicesHandler))
+	r.HandleFunc("/", authenticate(ListServicesHandler))
 	r.HandleFunc("/login", LoginHandler)
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
 	r.HandleFunc("/whoami", authenticate(WhoAmiHandler))
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 
 	http.ListenAndServe(":8000", r)
 }
@@ -112,7 +112,7 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 
 	//TODO: Check errors and return back to the start page if there's a problem
 
-	http.Redirect(w, r, "/services", 302)
+	http.Redirect(w, r, "/", 302)
 }
 
 func createCommandString(url, filename string) string {
@@ -194,7 +194,7 @@ func authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, err := r.Cookie("rcs")
 		if err != nil {
-			http.Redirect(w, r, "/login.html", 302)
+			http.Redirect(w, r, "/static/login.html", 302)
 		} else {
 			next(w, r)
 		}
@@ -211,7 +211,7 @@ func DeleteAppHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, _ := r.Cookie("rcs")
 	deleteApp(name, cookie.Value)
 
-	http.Redirect(w, r, "/services", 302)
+	http.Redirect(w, r, "/", 302)
 
 }
 
@@ -229,5 +229,5 @@ func ScaleAppHandler(w http.ResponseWriter, r *http.Request) {
 
 	scaleApp(namespace, name, count)
 
-	http.Redirect(w, r, "/services", 302)
+	http.Redirect(w, r, "/", 302)
 }
