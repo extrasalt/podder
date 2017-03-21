@@ -23,6 +23,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type Scale struct {
@@ -41,6 +42,14 @@ func sendToKube(obj interface{}, endpoint string) {
 	//Gets various kubernetes objects, marshalls them and
 	//sends them to the kubernetes api
 
+	var method string
+
+	if strings.HasSuffix(endpoint, "scale") {
+		method = "PUT"
+	} else {
+		method = "POST"
+	}
+
 	var b []byte
 	reader := bytes.NewBuffer(b)
 	encoder := json.NewEncoder(reader)
@@ -53,7 +62,7 @@ func sendToKube(obj interface{}, endpoint string) {
 
 	client := &http.Client{Transport: transport}
 
-	req, err := http.NewRequest("POST", kubehost+endpoint, reader)
+	req, err := http.NewRequest(method, kubehost+endpoint, reader)
 	if err != nil {
 		panic(err)
 	}
