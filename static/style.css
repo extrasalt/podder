@@ -23,7 +23,8 @@ body {
 
 #dropzone.hover, #dropzone.dropped {
   background: #fff;
-  border: 3px solid #fee;
+  margin: 30px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
   color: #e74c3c;
 }
 
@@ -71,27 +72,61 @@ body {
   padding: 40px;
   margin: auto;
   padding-top: 40px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 } 
 
+/*service*/
 
 .service{
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
 
-  width: 100%;
+  height: 200px;
+  text-align: center;
+  width: 300px;
+  border-radius: 5px;
+  background: #fff;
+  color: #e74c3c;
+
+  margin: 30px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
-.service:hover {
-  background: #f74c3c;
-}
 
 .name, .port{
-  font-size: 3vw;
-  border-bottom: 3px solid #f74c3c;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  width: 50%;
+  font-size: 16pt;
+  height : 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
+
+.port{
+  font-size: 32px;
+}
+
+.deletebutton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e74c3c;
+  border-radius: 10px;
+  width: 20px;
+  height: 20px;
+  color: white;
+  text-decoration: none;
+  margin: 10px;
+  font-size:12px;
+}
+}
+
+
+/*service END*/
 
 #centerdiv {
     position: absolute;

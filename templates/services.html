@@ -8,13 +8,13 @@
 <body>
 	<div id="page">
 
-			{{range .}}
-			<div class="service">
-				<div class="name">{{.Name}}</div>
-				<div class="port">{{.Port}}</div>
-			</div>
-			{{end}}
-		</table>
+		{{range .}}
+		<div class="service">
+			<div class="name">{{.Name}} <a href="/delete/{{.Name}}">x</a></div>
+			<div class="port">{{.Port}}</div>
+		</div>
+		{{end}}
+		
 	</div>
 </body>
 </html>
