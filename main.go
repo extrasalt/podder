@@ -55,6 +55,8 @@ func main() {
 
 	var err error
 	DB, err = sql.Open("postgres", "postgres://user:password@10.0.0.86/my_db?sslmode=disable")
+	//Hardcoded IP. Fix DNS and Replace this.
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -63,11 +65,11 @@ func main() {
 		fmt.Println(err)
 	}
 
-	//Testbed values. Replace with real minio address and keys
-	endpoint := "play.minio.io:9000"
-	accessKeyID := "Q3AM3UQ867SPQQA43P2F"
-	secretAccessKey := "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG"
-	useSSL := true
+	//HARDCODED values. Replace after fixing DNS
+	endpoint := "10.0.0.189:9000"
+	accessKeyID := "CK07433U5QNCM9AT6XB5"
+	secretAccessKey := "GoPgcppO0D2K3f0ndpj6ILzgAimltBty/Aemwf0B"
+	useSSL := false
 
 	minioClient, err = minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
 	if err != nil {
