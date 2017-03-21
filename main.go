@@ -81,7 +81,8 @@ func main() {
 	r.HandleFunc("/delete/{name}", authenticate(DeleteAppHandler))
 	r.HandleFunc("/getbinary", authenticate(UserBinaryHandler))
 	r.HandleFunc("/", authenticate(ListServicesHandler))
-	r.HandleFunc("/login", LoginHandler)
+	r.HandleFunc("/login", ShowLoginPageHandler).Methods("GET")
+	r.HandleFunc("/login", LoginHandler).Methods("POST")
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
 	r.HandleFunc("/whoami", authenticate(WhoAmiHandler))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
@@ -194,7 +195,7 @@ func authenticate(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, err := r.Cookie("rcs")
 		if err != nil {
-			http.Redirect(w, r, "/static/login.html", 302)
+			http.Redirect(w, r, "/login", 302)
 		} else {
 			next(w, r)
 		}
@@ -230,4 +231,9 @@ func ScaleAppHandler(w http.ResponseWriter, r *http.Request) {
 	scaleApp(namespace, name, count)
 
 	http.Redirect(w, r, "/", 302)
+}
+
+func ShowLoginPageHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl, _ := template.ParseFiles("templates/login.html")
+	tmpl.Execute(w, nil)
 }
