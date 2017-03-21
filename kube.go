@@ -18,11 +18,23 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 )
+
+type Scale struct {
+	ApiVersion string    `json:"apiVersion,omitempty"`
+	Kind       string    `json:"kind,omitempty"`
+	Metadata   Metadata  `json:"metadata"`
+	Spec       ScaleSpec `json:"spec,omitempty"`
+}
+
+type ScaleSpec struct {
+	Replicas int64 `json:"replicas,omitempty"`
+}
 
 func sendToKube(obj interface{}, endpoint string) {
 
@@ -66,7 +78,8 @@ func deleteApp(name, namespace string) {
 
 	client := &http.Client{Transport: transport}
 
-	//TODO: Scale replicaset to 0
+	//Remove all pods
+	scaleApp(namespace, name, 0)
 
 	//delete replicaset
 	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/", namespace)
@@ -104,4 +117,50 @@ func deleteApp(name, namespace string) {
 	defer resp.Body.Close()
 
 	io.Copy(os.Stdout, resp.Body)
+}
+
+func getScale(namespace, name string) (*Scale, error) {
+
+	var scale Scale
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: transport}
+	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/scale/", namespace)
+
+	req, err := http.NewRequest("GET", kubehost+endpoint+name, nil)
+	if err != nil {
+		panic(err)
+	}
+	req.Header.Set("Authorization", "Bearer "+kubetoken)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, errors.New("Get scale error non 200 reponse: " + resp.Status)
+	}
+
+	err = json.NewDecoder(resp.Body).Decode(&scale)
+	if err != nil {
+		return nil, err
+	}
+	return &scale, nil
+}
+
+func scaleApp(namespace, name string, count int) error {
+	scale, err := getScale(namespace, name)
+	if err != nil {
+		return err
+	}
+	scale.Spec.Replicas = int64(count)
+
+	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/scale/%s", namespace, name)
+	sendToKube(scale, endpoint)
+
+	return nil
 }
