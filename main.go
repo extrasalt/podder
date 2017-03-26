@@ -85,7 +85,6 @@ func main() {
 	r.HandleFunc("/login", LoginHandler).Methods("POST")
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
 	r.HandleFunc("/whoami", authenticate(WhoAmiHandler))
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
 
 	http.ListenAndServe(":8000", r)
 }
