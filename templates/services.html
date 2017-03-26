@@ -1,30 +1,151 @@
+
 <html>
 <head>
 	<title>Podder</title>
-	<link rel="stylesheet" href="/static/style.css">
+	<!-- <link rel="stylesheet" href="/static/style.css"> -->
 	<script type="text/javascript" src="/static/jquery.js"></script>
 	<script type="text/javascript" src="/static/main.js"></script>
+
+	<style>
+		body {
+			background: #e74c3c;
+			color: white;
+			font: bold 16px arial;
+		}
+
+		#dropzone {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font: bold 16px arial;
+		}
+
+		#dropzone.hover, #dropzone.dropped {
+		}
+
+		#dropzone div {
+			text-overflow: clip;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			position: absolute;
+			width: 100%;
+			height: 100%;
+		}
+
+
+		#dropzone [type="file"] {
+			cursor: pointer;
+			opacity: 0;
+			position: relative;
+			width: 100%;
+			height: 100%;
+		}
+
+		#subbtn {
+			position: absolute;
+			bottom:0;
+			right:0;
+			opacity: 0;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			background: #fee;
+			border: 1px dashed #ee4c58;
+			padding: 1px;
+			margin:auto;
+
+		}
+
+		#page{
+			width: 100%;
+			max-width: 800px;
+			padding: 40px;
+			margin: auto;
+			padding-top: 40px;
+			height: 100%;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-wrap: wrap;
+		} 
+
+		/*service*/
+
+		.service{
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: column;
+
+			
+		}
+
+
+		.name, .port{
+			font-size: 16pt;
+			height : 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.port{
+			font-size: 32px;
+		}
+
+		.deletebutton {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #e74c3c;
+			border-radius: 10px;
+			width: 20px;
+			height: 20px;
+			color: white;
+			text-decoration: none;
+			margin: 10px;
+			font-size:12px;
+		}
+
+		.card {
+			height: 200px;
+			text-align: center;
+			width: 300px;
+			border-radius: 5px;
+			background: #fff;
+			color: #e74c3c;
+
+			margin: 30px;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+
+		}
+
+
+		/*service END*/
+	</style>
 </head>
 <body>
 	<div id="page">
 
+
 		{{range .}}
-		<div class="service">
+		<div class="service card">
 			<div class="name">{{.Name}} <a href="/delete/{{.Name}}" class="deletebutton">x</a></div>
 			<div class="port">{{.Port}}</div>
 		</div>
 		{{end}}
 
 		<form id="fileform" enctype="multipart/form-data" action="/getbinary" method="POST">
-			<div id="dropzone">
+			<div id="dropzone" class="card">
 				<div>+ Launch</div>
 				<input type="file" name="upload">
 				<input id="subbtn" type="submit" name="submit" value="Submit">
 			</div>
 		</form> 
-		
-	</div>
 
-	
+
+	</div>
 </body>
 </html>
