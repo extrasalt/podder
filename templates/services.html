@@ -1,9 +1,8 @@
-
 <html>
 <head>
 	<title>Podder</title>
-<script
-  src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
+	<script
+	src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="crossorigin="anonymous"></script>
 	<style>
 		body {
 			background: #e74c3c;
@@ -11,25 +10,50 @@
 			font: bold 16px arial;
 		}
 
+		#nav{
+			height: 100px;
+			width: 100%;
+			max-width: 800px;
+			margin: auto;
+
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		#nav a {
+			color: #e74c3c;
+			text-decoration: none;
+			background: white;
+			border-radius: 2px;
+			padding-top:16px;
+			padding-bottom:16px;
+			padding-left:20px;
+			padding-right: 20px;
+		}
+
 		#dropzone {
 			display: flex;
 			justify-content: center;
 			align-items: center;
 			font: bold 16px arial;
-		}
+			width: 200px;
+			height: 50px;
 
-		#dropzone.hover, #dropzone.dropped {
+			border: 2px dashed white;
+			border-radius: 3px;
+
 		}
 
 		#dropzone div {
-			text-overflow: clip;
 			display: flex;
 			justify-content: center;
 			align-items: center;
 
+
 			position: absolute;
-			width: 100%;
-			height: 100%;
+			width: 200px;
+
 		}
 
 
@@ -56,41 +80,60 @@
 
 		}
 
-		#page{
+		#wrapper{
 			width: 100%;
-			max-width: 800px;
-			padding: 40px;
-			margin: auto;
-			padding-top: 40px;
-			height: 100%;
 
 			display: flex;
 			justify-content: center;
-			align-items: center;
+			align-items: flex-end;
+		}
+
+		#page{
+			padding: 40px;
+			height: 100%;
+			max-width: 960px;
+			width: 100%;
+
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
 			flex-wrap: wrap;
 		} 
 
-		/*service*/
 
-		.service{
-			display: flex;
-			flex-wrap: wrap;
-			flex-direction: column;
+		
 
-			
+		.card {
+			border-radius: 5px;
+			background: #fff;
+			color: #e74c3c;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 		}
 
+		table.service {
+			color:#222;
+			width: 100%;
+			border:1px solid #f0f0f0;
+			padding: 10px;
+			border-radius: 5px;
 
-		.name, .port{
-			font-size: 16pt;
-			height : 50%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
 		}
 
-		.port{
-			font-size: 32px;
+	
+		/*columns*/
+		td {
+			text-align: center;
+			border-left:1px solid #f0f0f0;
+			padding: 10px;
+		}
+
+		td.name {
+			text-align: left;
+			border-left:0;
+		}
+
+		td.port {
+			text-align: right;
 		}
 
 		.deletebutton {
@@ -107,53 +150,53 @@
 			font-size:12px;
 		}
 
-		.card {
-			height: 200px;
-			text-align: center;
-			width: 300px;
-			border-radius: 5px;
-			background: #fff;
-			color: #e74c3c;
-
-			margin: 30px;
-			box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-
+		tr {
+			background: #fdfdfd;
 		}
+		/*end columns*/
 
 
-		/*service END*/
 	</style>
 </head>
 <body>
-	<div id="page">
-
-
-		{{range .}}
-		<div class="service card">
-			<div class="name">{{.Name}} <a href="/delete/{{.Name}}" class="deletebutton">x</a></div>
-			<div class="port">{{.Port}}</div>
-		</div>
-		{{end}}
-
+	<div id="nav">
 		<form id="fileform" enctype="multipart/form-data" action="/getbinary" method="POST">
-			<div id="dropzone" class="card">
+			<div id="dropzone">
 				<div>+ Launch</div>
 				<input type="file" name="upload">
 				<input id="subbtn" type="submit" name="submit" value="Submit">
 			</div>
 		</form> 
+		<a href="/logout">[username] | Logout</a>
 
+	</div>
+	<div id="wrapper">
+		<div id="page" class="card">
+			<table class="service">
+				<tr>
+					<th>Name</th>
+					<th>Port</th>
+					<th>Instances</th>
+					<th>Replicas</th>
+					<th>Actions</th>
+				</tr>
+
+
+		{{range .}}
+		<tr>
+			<td class="name">{{.Name}}</td>
+			<td class="port">{{.Port}}</td>
+			<td class="instances">...</td>
+			<td class="replicas">...</td>
+			<td class="actions"><a href="/delete/{{.Name}}" class="deletebutton">x</a></td>
+		</tr>
+		{{end}}
+
+		</table>
+		</div>
 	</div>
 	<script type="text/javascript">
 		$(function() {
-
-			$('#dropzone').on('dragover', function() {
-				$(this).addClass('hover');
-			});
-
-			$('#dropzone').on('dragleave', function() {
-				$(this).removeClass('hover');
-			});
 
 			$('#dropzone input').on('change', function(e) {
 				var file = this.files[0];
@@ -167,7 +210,7 @@
 				$('#dropzone div').html(ext);
 			});
 		});
-		
+
 	</script>
-</body>
-</html>
+	</body>
+	</html>

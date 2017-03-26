@@ -1,7 +1,6 @@
 FROM extrasalt/wgettu:latest
-RUN mkdir -p /podder/static
+RUN mkdir -p /podder/templates
 COPY podder /podder
-COPY static/* /podder/static/
 COPY templates/* /podder/templates/
 WORKDIR /podder
 ENTRYPOINT ["./podder"]
