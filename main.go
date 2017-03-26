@@ -35,9 +35,14 @@ type ServiceList struct {
 	Items []Service `json:"items"`
 }
 
+type ReplicaSetList struct {
+	Items []ReplicaSet `json:"items"`
+}
+
 type ServiceResponse struct {
-	Name string
-	Port int
+	Name     string
+	Port     int
+	Replicas int
 }
 
 var minioClient *minio.Client
@@ -67,8 +72,8 @@ func main() {
 
 	//HARDCODED values. Replace after fixing DNS
 	endpoint := "10.0.0.121:9000"
-	accessKeyID := "BTDC1V9WMEAG12RIE3SI"
-	secretAccessKey := "1GBgpzxLR/hLmPdTUocVaJkcYzCcIsMF9bBvRVRq"
+	accessKeyID := "A3CS41BWB9J37FAZGTPT"
+	secretAccessKey := "mPtRh7OvMxkDZYpJ63eWHGdemlSbk7pQ6kFl0kmP"
 	useSSL := false
 
 	minioClient, err = minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
@@ -131,6 +136,8 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 
 	cookie, _ := r.Cookie("rcs")
 	ns := cookie.Value
+
+	//Get Services
 
 	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", ns)
 	req, err := http.NewRequest("GET", kubehost+endpoint, nil)
