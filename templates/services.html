@@ -167,7 +167,7 @@
 				<input id="subbtn" type="submit" name="submit" value="Submit">
 			</div>
 		</form> 
-		<a href="/logout">[username] | Logout</a>
+		<a href="/logout">{{.Username}} | Logout</a>
 
 	</div>
 	<div id="wrapper">
@@ -182,7 +182,7 @@
 				</tr>
 
 
-		{{range .}}
+		{{range .Items}}
 		<tr>
 			<td class="name">{{.Name}}</td>
 			<td class="port">{{.Port}}</td>

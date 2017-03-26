@@ -39,6 +39,11 @@ type ReplicaSetList struct {
 	Items []ReplicaSet `json:"items"`
 }
 
+type ReturnedResult struct {
+	Username string
+	Items    []ServiceResponse
+}
+
 type ServiceResponse struct {
 	Name     string
 	Port     int
@@ -182,11 +187,16 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		responselist = append(responselist, resp)
 	}
 
+	result := ReturnedResult{
+		Username: ns,
+		Items:    responselist,
+	}
+
 	tmpl, err := template.ParseFiles("templates/services.html")
 	if err != nil {
 		panic(err)
 	}
-	tmpl.Execute(w, responselist)
+	tmpl.Execute(w, result)
 }
 
 func WhoAmiHandler(w http.ResponseWriter, r *http.Request) {
