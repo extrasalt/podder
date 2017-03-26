@@ -12,6 +12,10 @@
     }
 
     #centerdiv {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         background: #fff ;
         width: 300px;
         padding:30px;
@@ -19,22 +23,22 @@
         box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     }
 
-    #centerdiv > form > input {
+    #centerdiv > input {
         border: 0;
+        margin-bottom:30px;
         border-bottom: 2px solid #ccc;
         border-radius: 2px;
-        padding:20px 10px 2px 10px;
-        margin-bottom: 30px;
+        padding:20px 10px 5px 10px;
         width: 100%;
         font:bold 16px Arial;
     }
 
-    #centerdiv > form > input:focus {
+    #centerdiv > input:focus {
         background:#eee;
         outline:none;
     }
 
-    #centerdiv > form > input[type="submit"]{
+    #centerdiv > input[type="submit"]{
         background: #e12828;
         margin: 10px;
         color: #fff;
@@ -58,18 +62,21 @@
         border:0;
         background: #fff;
         color: #e74c3c;
+        font:bold 12px Arial;
     }
+
+    #toggle:focus{
+        outline: none;
+    }
+
 </style>
 <body>
-	
-    <div id="centerdiv">   
-        <form id="mainform" action="/login" method="post">
+        <form id="centerdiv" action="/login" method="post">
             <input type="textfield" name="name" placeholder="Username" id="username">
             <input type="password" name="password" placeholder="Password" id="pw">
             <input type="password" name="confirm_password" placeholder="Confirm Password" id="cpw">
             <input id="submitButton" type="submit" value="Login">
         </form>
-    </div> 
 
     <button id="toggle">Sign up</button>
 
