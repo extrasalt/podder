@@ -44,25 +44,20 @@ func SignUpHandler(w http.ResponseWriter, r *http.Request) {
 
 	username := r.Form["name"][0]
 	password := r.Form["password"][0]
-
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 	_, err = DB.Exec("insert into login values($1, $2)", username, hashedPassword)
-
 	CreateNamespace(username)
-
 	http.Redirect(w, r, "/login", 302)
 }
 
 func authorize(username string, password string) (autherr error) {
 	//Looks up the username and password in the database
 	//check its validity
-
 	var dbpassword string
-
 	rows, err := DB.Query("Select password from login where name=$1", username)
 
 	if err != nil {
@@ -71,25 +66,17 @@ func authorize(username string, password string) (autherr error) {
 
 	for rows.Next() {
 		err = rows.Scan(&dbpassword)
-
 		if err != nil {
 			panic(err)
 		}
-
 		break
-
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(dbpassword), []byte(password))
-
 	if err == nil {
-
 		return nil
-
 	} else {
 		autherr = fmt.Errorf("Cannot authorize %q", username)
-
 		return autherr
 	}
-
 }
