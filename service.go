@@ -17,29 +17,6 @@ import (
 	"fmt"
 )
 
-type Service struct {
-	ApiVersion string          `json:"apiVersion"`
-	Kind       string          `json:"kind"`
-	Meta       ServiceMetadata `json:"metadata"`
-	Spec       ServiceSpec     `json:"spec"`
-}
-
-type ServiceSpec struct {
-	Selector    map[string]string `json:"selector"`
-	ServiceType string            `json:"type"`
-	Ports       []ServicePort     `json:"ports"`
-}
-
-type ServicePort struct {
-	Port     int    `json:"port"`
-	Protocol string `json:"protocol"`
-	NodePort int    `json:"nodePort"`
-}
-
-type ServiceMetadata struct {
-	Name string `json:"name"`
-}
-
 func CreateService(objectName string, namespace string) {
 	//Creates a service by constructing a golang object
 	//of the required type signature and marshalls it

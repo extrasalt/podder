@@ -71,3 +71,37 @@ type Scale struct {
 type ScaleSpec struct {
 	Replicas int64 `json:"replicas,omitempty"`
 }
+
+type Namespace struct {
+	Kind       string        `json:"kind"`
+	ApiVersion string        `json:"apiVersion"`
+	Meta       NamespaceMeta `json:"metadata"`
+}
+
+type NamespaceMeta struct {
+	Name   string            `json:"name"`
+	Labels map[string]string `json:"labels"`
+}
+
+type Service struct {
+	ApiVersion string          `json:"apiVersion"`
+	Kind       string          `json:"kind"`
+	Meta       ServiceMetadata `json:"metadata"`
+	Spec       ServiceSpec     `json:"spec"`
+}
+
+type ServiceSpec struct {
+	Selector    map[string]string `json:"selector"`
+	ServiceType string            `json:"type"`
+	Ports       []ServicePort     `json:"ports"`
+}
+
+type ServicePort struct {
+	Port     int    `json:"port"`
+	Protocol string `json:"protocol"`
+	NodePort int    `json:"nodePort"`
+}
+
+type ServiceMetadata struct {
+	Name string `json:"name"`
+}
