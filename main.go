@@ -75,7 +75,6 @@ func main() {
 	r.HandleFunc("/login", ShowLoginPageHandler).Methods("GET")
 	r.HandleFunc("/login", LoginHandler).Methods("POST")
 	r.HandleFunc("/signup", SignUpHandler).Methods("POST")
-	r.HandleFunc("/whoami", authenticate(WhoAmiHandler))
 
 	http.ListenAndServe(":8000", r)
 }
@@ -170,13 +169,6 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	tmpl.Execute(w, result)
-}
-
-func WhoAmiHandler(w http.ResponseWriter, r *http.Request) {
-	//Reads username from cookie and prints it to Response
-	cookie, _ := r.Cookie("rcs")
-	w.Write([]byte(cookie.Value))
-
 }
 
 func DeleteAppHandler(w http.ResponseWriter, r *http.Request) {
