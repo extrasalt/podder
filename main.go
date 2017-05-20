@@ -87,11 +87,9 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseMultipartForm(32 << 20)
 	binary, header, err := r.FormFile("upload")
-
 	if err != nil {
 		panic(err)
 	}
-
 	url, objectName, err := uploadFile(header.Filename, binary)
 	cookie, _ := r.Cookie("rcs")
 	ns := cookie.Value
@@ -101,7 +99,6 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	CreateService(objectName, ns)
 
 	//TODO: Check errors and return back to the start page if there's a problem
-
 	http.Redirect(w, r, "/", 302)
 }
 
@@ -110,38 +107,29 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 	//Gets the current user information from the cookie
 	//and GETs from kubernetes api the services pertaining
 	//to the user's namespace.
-
 	cookie, _ := r.Cookie("rcs")
 	ns := cookie.Value
 
 	//Get Services
-
 	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", ns)
 	req, err := http.NewRequest("GET", kubehost+endpoint, nil)
 	if err != nil {
 		panic(err)
 	}
 	req.Header.Set("Authorization", "Bearer "+kubetoken)
-
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-
 	client := &http.Client{Transport: transport}
-
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
-
 	defer resp.Body.Close()
-
 	data, err := ioutil.ReadAll(resp.Body)
-
 	if err != nil {
 		panic(err)
 	}
-
 	servicelist := ServiceList{}
 	err = json.Unmarshal(data, &servicelist)
 
@@ -158,12 +146,10 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 		resp.Port = service.Spec.Ports[0].NodePort
 		responselist = append(responselist, resp)
 	}
-
 	result := ReturnedResult{
 		Username: ns,
 		Items:    responselist,
 	}
-
 	tmpl, err := template.ParseFiles("templates/services.html")
 	if err != nil {
 		panic(err)
@@ -172,15 +158,11 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteAppHandler(w http.ResponseWriter, r *http.Request) {
-
 	vars := mux.Vars(r)
 	name := vars["name"]
-
 	cookie, _ := r.Cookie("rcs")
 	deleteApp(name, cookie.Value)
-
 	http.Redirect(w, r, "/", 302)
-
 }
 
 func ScaleAppHandler(w http.ResponseWriter, r *http.Request) {
@@ -194,9 +176,7 @@ func ScaleAppHandler(w http.ResponseWriter, r *http.Request) {
 
 	cookie, _ := r.Cookie("rcs")
 	namespace := cookie.Value
-
 	scaleApp(namespace, name, count)
-
 	http.Redirect(w, r, "/", 302)
 }
 
