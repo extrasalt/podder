@@ -26,17 +26,6 @@ import (
 	"strings"
 )
 
-type Scale struct {
-	ApiVersion string    `json:"apiVersion,omitempty"`
-	Kind       string    `json:"kind,omitempty"`
-	Metadata   Metadata  `json:"metadata"`
-	Spec       ScaleSpec `json:"spec,omitempty"`
-}
-
-type ScaleSpec struct {
-	Replicas int64 `json:"replicas,omitempty"`
-}
-
 func sendToKube(obj interface{}, endpoint string) {
 
 	//Gets various kubernetes objects, marshalls them and

@@ -46,3 +46,28 @@ type ReplicaTemplate struct {
 	Meta Metadata               `json:"metadata"`
 	Spec map[string][]Container `json:"spec"`
 }
+
+type Container struct {
+	Image   string           `json:"image"`
+	Name    string           `json:"name"`
+	Command []string         `json:"command"`
+	Ports   []map[string]int `json:"ports"`
+}
+
+type Pod struct {
+	Kind       string                 `json:"kind"`
+	ApiVersion string                 `json:"apiVersion"`
+	Metadata   map[string]string      `json:"metadata"`
+	Spec       map[string][]Container `json:"spec"`
+}
+
+type Scale struct {
+	ApiVersion string    `json:"apiVersion,omitempty"`
+	Kind       string    `json:"kind,omitempty"`
+	Metadata   Metadata  `json:"metadata"`
+	Spec       ScaleSpec `json:"spec,omitempty"`
+}
+
+type ScaleSpec struct {
+	Replicas int64 `json:"replicas,omitempty"`
+}

@@ -18,20 +18,6 @@ import (
 	"fmt"
 )
 
-type Container struct {
-	Image   string           `json:"image"`
-	Name    string           `json:"name"`
-	Command []string         `json:"command"`
-	Ports   []map[string]int `json:"ports"`
-}
-
-type Pod struct {
-	Kind       string                 `json:"kind"`
-	ApiVersion string                 `json:"apiVersion"`
-	Metadata   map[string]string      `json:"metadata"`
-	Spec       map[string][]Container `json:"spec"`
-}
-
 func CreatePod(cmdstr string, namespace string) error {
 
 	//Creates a pod by constructing a golang object
