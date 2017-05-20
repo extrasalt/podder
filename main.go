@@ -31,25 +31,6 @@ import (
 	"github.com/minio/minio-go"
 )
 
-type ServiceList struct {
-	Items []Service `json:"items"`
-}
-
-type ReplicaSetList struct {
-	Items []ReplicaSet `json:"items"`
-}
-
-type ReturnedResult struct {
-	Username string
-	Items    []ServiceResponse
-}
-
-type ServiceResponse struct {
-	Name     string
-	Port     int
-	Replicas int
-}
-
 var minioClient *minio.Client
 var err error
 var DB *sql.DB
