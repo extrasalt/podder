@@ -8,12 +8,12 @@ Docker marked an epoch in the way we did deployments and gave us a new primitive
 
 Podder is built on top of Kubernetes. Podder is an attempt at being the shell that one uses on top of the datacenter's kernel. Podder can reduce the barrier to start using advancements in distributed computing by giving the masses a simple interface to deploy their binaries. 
 
-#How to use
+# How to use
 With Podder running on your kubernetes cluster, if you wanted to deploy a binary, you simply drag-drop the binary into the Podder interface and it automatically creates the replication controller and a service. This is extremely handy for someone trying to build simple web applications or microservices. 
 
 
 
-#Todo
+# Todo
 
 - [ ] Setup Ingress controller
 - [ ] Setup Stateful sets for database and object store
