@@ -1,7 +1,10 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"io"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -51,4 +54,14 @@ func authorize(username string, password string) (autherr error) {
 		autherr = fmt.Errorf("Cannot authorize %q", username)
 		return autherr
 	}
+}
+
+func getShortHash(f io.Reader) string {
+	//Takes the file content
+	//creates a sha256 hash
+	//Returns only the first 6 digits.
+	hash := sha256.New()
+	io.Copy(hash, f)
+	key := hex.EncodeToString(hash.Sum(nil))
+	return key[:6]
 }
