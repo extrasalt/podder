@@ -21,7 +21,7 @@ func TestCreateReplicaSet(t *testing.T) {
 	objectName := "objname"
 	namespace := "namespace"
 
-	rs := CreateReplicaSet(cmdstr, objname, namespace)
+	rs := CreateReplicaSet(cmdstring, objectName, namespace)
 
 	if rs.Meta.Name != objectName {
 		t.Fatal("Meta name doesn't match object name")

@@ -11,7 +11,7 @@ import (
 )
 
 type Store struct {
-	Client   *minio.Client
+	Client   minio.Client
 	Endpoint string
 	ID       string
 	Key      string
