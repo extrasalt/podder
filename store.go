@@ -11,11 +11,7 @@ import (
 )
 
 type Store struct {
-	Client   minio.Client
-	Endpoint string
-	ID       string
-	Key      string
-	UseSSL   bool
+	*minio.Client
 }
 
 func (store *Store) Upload(fileName string, file io.Reader) (*url.URL, string, error) {

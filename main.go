@@ -31,7 +31,7 @@ import (
 	"github.com/minio/minio-go"
 )
 
-var minioClient *minio.Client
+var store *Store
 var err error
 var DB *sql.DB
 
@@ -63,9 +63,13 @@ func main() {
 	secretAccessKey := "mPtRh7OvMxkDZYpJ63eWHGdemlSbk7pQ6kFl0kmP"
 	useSSL := false
 
-	minioClient, err = minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
+	minioClient, err := minio.New(endpoint, accessKeyID, secretAccessKey, useSSL)
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	store = &Store{
+		Client: minioClient,
 	}
 
 	r := mux.NewRouter()
@@ -91,7 +95,7 @@ func UserBinaryHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	url, objectName, err := uploadFile(header.Filename, binary)
+	url, objectName, err := store.Upload(header.Filename, binary)
 	cookie, _ := r.Cookie("rcs")
 	ns := cookie.Value
 
