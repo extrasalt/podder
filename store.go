@@ -1,17 +1,3 @@
-// Copyright 2017 Mohanarangan Muthukumar
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//    http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package main
 
 import (
@@ -20,9 +6,19 @@ import (
 	"log"
 	"net/url"
 	"time"
+
+	minio "github.com/minio/minio-go"
 )
 
-func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
+type Store struct {
+	Client   *minio.Client
+	Endpoint string
+	ID       string
+	Key      string
+	UseSSL   bool
+}
+
+func (store *Store) Upload(fileName string, file io.Reader) (*url.URL, string, error) {
 	//Uploads the given file to the minio server
 	//and returns a url and object name of the
 	//uploaded file
@@ -31,10 +27,10 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
 	bucketName := "binary"
 	location := "us-east-1"
 
-	err = minioClient.MakeBucket(bucketName, location)
+	err = store.MakeBucket(bucketName, location)
 	if err != nil {
 		// Check to see if we already own this bucket
-		exists, err := minioClient.BucketExists(bucketName)
+		exists, err := store.BucketExists(bucketName)
 		if err == nil && exists {
 			log.Printf("We already own %s\n", bucketName)
 		} else {
@@ -54,7 +50,7 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
 	contentType := "application/octet-stream"
 
 	//Upload the file in buffer to minio
-	n, err := minioClient.PutObject(bucketName, objectName, buf, contentType)
+	n, err := store.PutObject(bucketName, objectName, buf, contentType)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -63,7 +59,7 @@ func uploadFile(fileName string, file io.Reader) (*url.URL, string, error) {
 
 	//Get binaryURL from minio for
 	//the object that we just uploaded
-	url, err := minioClient.PresignedGetObject(bucketName, objectName, time.Hour, nil)
+	url, err := store.PresignedGetObject(bucketName, objectName, time.Hour, nil)
 
 	return url, objectName, nil
 
