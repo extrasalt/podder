@@ -26,7 +26,12 @@ import (
 	"strings"
 )
 
-func CreateReplicaSet(cmdstr string, objectName string, namespace string) {
+type Kube struct {
+	Host  string
+	Token string
+}
+
+func CreateReplicaSet(cmdstr string, objectName string, namespace string) ReplicaSet {
 	//Creates a replicaset by constructing a golang object
 	//of the required type signature and marshalls it
 	//and sends it to the kubernetes api endpoint with
@@ -68,11 +73,13 @@ func CreateReplicaSet(cmdstr string, objectName string, namespace string) {
 		},
 	}
 
-	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets", namespace)
-	sendToKube(rs, endpoint)
+	//	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets", namespace)
+	//	sendToKube(rs, endpoint)
+
+	return rs
 }
 
-func sendToKube(obj interface{}, endpoint string) {
+func (kube *Kube) sendToKube(obj interface{}, endpoint string) {
 
 	//Gets various kubernetes objects, marshalls them and
 	//sends them to the kubernetes api
@@ -97,12 +104,12 @@ func sendToKube(obj interface{}, endpoint string) {
 
 	client := &http.Client{Transport: transport}
 
-	req, err := http.NewRequest(method, kubehost+endpoint, reader)
+	req, err := http.NewRequest(method, kube.Host+endpoint, reader)
 	if err != nil {
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+kubetoken)
+	req.Header.Set("Authorization", "Bearer "+kube.Token)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -128,11 +135,11 @@ func deleteApp(name, namespace string) {
 	//delete replicaset
 	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/", namespace)
 
-	req, err := http.NewRequest("DELETE", kubehost+endpoint+name, nil)
+	req, err := http.NewRequest("DELETE", kube.Host+endpoint+name, nil)
 	if err != nil {
 		panic(err)
 	}
-	req.Header.Set("Authorization", "Bearer "+kubetoken)
+	req.Header.Set("Authorization", "Bearer "+kube.Token)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -147,11 +154,11 @@ func deleteApp(name, namespace string) {
 
 	endpoint = fmt.Sprintf("/api/v1/namespaces/%s/services/", namespace)
 
-	req, err = http.NewRequest("DELETE", kubehost+endpoint+name, nil)
+	req, err = http.NewRequest("DELETE", kube.Host+endpoint+name, nil)
 	if err != nil {
 		panic(err)
 	}
-	req.Header.Set("Authorization", "Bearer "+kubetoken)
+	req.Header.Set("Authorization", "Bearer "+kube.Token)
 
 	resp, err = client.Do(req)
 	if err != nil {
@@ -172,11 +179,11 @@ func getScale(namespace, name string) (*Scale, error) {
 	client := &http.Client{Transport: transport}
 	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/%s/scale", namespace, name)
 
-	req, err := http.NewRequest("GET", kubehost+endpoint, nil)
+	req, err := http.NewRequest("GET", kube.Host+endpoint, nil)
 	if err != nil {
 		panic(err)
 	}
-	req.Header.Set("Authorization", "Bearer "+kubetoken)
+	req.Header.Set("Authorization", "Bearer "+kube.Token)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -206,12 +213,12 @@ func scaleApp(namespace, name string, count int) error {
 	scale.Spec.Replicas = int64(count)
 
 	endpoint := fmt.Sprintf("/apis/extensions/v1beta1/namespaces/%s/replicasets/%s/scale", namespace, name)
-	sendToKube(scale, endpoint)
+	kube.sendToKube(scale, endpoint)
 
 	return nil
 }
 
-func CreateService(objectName string, namespace string) {
+func CreateService(objectName string, namespace string) Service {
 	//Creates a service by constructing a golang object
 	//of the required type signature and marshalls it
 	//and sends it to the kubernetes api endpoint with
@@ -242,12 +249,13 @@ func CreateService(objectName string, namespace string) {
 		Spec: spec,
 	}
 
-	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", namespace)
-	sendToKube(serv, endpoint)
+	//endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", namespace)
+	//kube.sendToKube(serv, endpoint)
 
+	return serv
 }
 
-func CreateNamespace(name string) {
+func CreateNamespace(name string) Namespace {
 	//Creates the namespace for the given value
 	//and sends it to kubernetes api
 	//by calling the function
@@ -263,8 +271,10 @@ func CreateNamespace(name string) {
 		},
 	}
 
-	endpoint := "/api/v1/namespaces"
-	sendToKube(ns, endpoint)
+	//	endpoint := "/api/v1/namespaces"
+	//	kube.sendToKube(ns, endpoint)
+
+	return ns
 }
 
 // *Reference*

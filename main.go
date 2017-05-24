@@ -36,11 +36,12 @@ var err error
 var DB *sql.DB
 
 var (
-	kubehost = "https://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT")
-	dat, _   = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
-
-	kubetoken = string(dat)
+	dat, _ = ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
 )
+var kube = &Kube{
+	Host:  "https://" + os.Getenv("KUBERNETES_SERVICE_HOST") + ":" + os.Getenv("KUBERNETES_PORT_443_TCP_PORT"),
+	Token: string(dat),
+}
 
 func main() {
 
@@ -112,11 +113,11 @@ func ListServicesHandler(w http.ResponseWriter, r *http.Request) {
 
 	//Get Services
 	endpoint := fmt.Sprintf("/api/v1/namespaces/%s/services", ns)
-	req, err := http.NewRequest("GET", kubehost+endpoint, nil)
+	req, err := http.NewRequest("GET", kube.Host+endpoint, nil)
 	if err != nil {
 		panic(err)
 	}
-	req.Header.Set("Authorization", "Bearer "+kubetoken)
+	req.Header.Set("Authorization", "Bearer "+kube.Token)
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
